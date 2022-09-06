@@ -1,60 +1,151 @@
 package com.example.technicaltest.presentation.ui.fragments.gallery
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.technicaltest.R
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import com.esafirm.imagepicker.features.ImagePickerLauncher
+import com.esafirm.imagepicker.features.registerImagePicker
+import com.example.technicaltest.databinding.FragmentGalleryBinding
+import com.example.technicaltest.presentation.ui.adapters.gallery.GalleryAdapter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [GalleryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class GalleryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    // Binding
+    private var _binding: FragmentGalleryBinding? = null
+    private val binding get() = _binding!!
+
+    //ViewModel
+    private val viewModel: GalleryViewModel by viewModels()
+
+    // List of images for the gallery adapter
+    private var gallery: MutableList<String> = mutableListOf()
+
+    // Verify Camera permission
+    private var hasCameraPermission = false
+    // Verify Read storage permission
+    private var hasReadStoragePermission = false
+    // Permission launcher
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+
+    // Image picker launcher
+    private var imageLauncher: ImagePickerLauncher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
+        // Validate camera permission
+        hasCameraPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        // Validate read storage permission
+        hasReadStoragePermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        // Register permission launcher
+        permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) {
+            hasCameraPermission = it[Manifest.permission.CAMERA] ?: false
+            hasReadStoragePermission = it[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+
+            if (!hasCameraPermission || !hasReadStoragePermission) {
+                showAlertDialog()
+            }
+        }
+
+        // Register image picker launcher
+        imageLauncher = registerImagePicker { images ->
+            images.forEach { image ->
+                viewModel.uploadImage(image.uri, image.name) {
+                    gallery.add(it)
+                    binding.rvGallery.adapter?.notifyDataSetChanged()
+                }
+            }
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false)
+        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment GalleryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            GalleryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initRecyclerViewGallery()
+        pickImage()
+
+        lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                state.isLoading.let { isLoading ->
+                    if (isLoading) {
+                        binding.content.visibility = View.GONE
+                        binding.progress.visibility = View.VISIBLE
+                    } else {
+                        binding.content.visibility = View.VISIBLE
+                        binding.progress.visibility = View.GONE
+                    }
+                }
+                state.message?.let { message ->
+                    binding.content.visibility = View.GONE
+                    binding.tvHelper.text = message
+                    binding.tvHelper.visibility = View.VISIBLE
+                }
+                state.gallery.forEach { image ->
+                    gallery.add(image)
                 }
             }
+        }
     }
+
+    private fun showAlertDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Permisos denegados")
+        builder.setMessage("Tu necesitas dar permisos para poder usar la cámara y la galería")
+        builder.setPositiveButton("Ok") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    private fun initRecyclerViewGallery() {
+        val gridLayoutManager = GridLayoutManager(context, 3)
+        binding.rvGallery.layoutManager = gridLayoutManager
+        binding.rvGallery.adapter = GalleryAdapter(gallery)
+    }
+
+    private fun pickImage() {
+        binding.addPhoto.setOnClickListener {
+            if (hasCameraPermission && hasReadStoragePermission) {
+                imageLauncher?.launch()
+            } else {
+                permissionLauncher.launch(arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                ))
+            }
+        }
+    }
+
 }

@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">Technical test</string>
-    <string name="menu_movies">Movies</string>
-    <string name="menu_location">Location</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_profile">Profile</string>
+    <string name="menu_movies">Peliculas</string>
+    <string name="menu_location">Localizacion</string>
+    <string name="menu_gallery">Galeria</string>
+    <string name="menu_profile">Perfil</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="movie">Movie</string>
-    <string name="popular_movies">Popular movies</string>
-    <string name="top_rated_movies">Top Rated Movies</string>
+    <string name="movie">Pelicula</string>
+    <string name="popular_movies">Peliculas populares</string>
+    <string name="top_rated_movies">Películas Mejor Calificadas</string>
+    <string name="add_to_gallery">Agregar foto</string>
+    <string name="my_gallery">Mis fotos</string>
+    <string name="photo">Foto</string>
+    <string name="person">persona</string>
+    <string name="images">Imagenes</string>
+    <string name="movies_person">Peliculas en las que ha participado:</string>
+    <string name="name">Nombre</string>
+    <string name="description">Descripcion:</string>
 </resources>

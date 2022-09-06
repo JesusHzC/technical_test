@@ -18,7 +18,7 @@ object ApiModule {
     const val BASE_URL_IMAGE = "https://image.tmdb.org/t/p/w500/"
     private const val BASE_URL = "https://api.themoviedb.org/3/"
 
-    private const val apiKey: String = BuildConfig.API_MOVIE_KEY
+    private const val API_KEY: String = BuildConfig.API_MOVIE_KEY
 
     private fun provideHttpClient(): OkHttpClient {
         return OkHttpClient
@@ -26,7 +26,7 @@ object ApiModule {
             .addInterceptor { chain ->
                 val newRequest = chain.request().url
                     .newBuilder()
-                    .addQueryParameter("api_key", apiKey)
+                    .addQueryParameter("api_key", API_KEY)
                     .build()
                 chain.proceed(chain.request().newBuilder().url(newRequest).build())
             }

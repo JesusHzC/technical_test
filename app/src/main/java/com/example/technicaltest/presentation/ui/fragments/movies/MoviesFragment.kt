@@ -18,9 +18,11 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MoviesFragment : Fragment() {
 
+    //Binding
     private var _binding: FragmentMoviesBinding? = null
     private val binding get() = _binding!!
 
+    //ViewModel
     private val viewModel: MoviesViewModel by viewModels()
 
     override fun onCreateView(

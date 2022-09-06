@@ -30,7 +30,6 @@ class MoviesViewModel @Inject constructor(
 
         when (val result = moviesRepository.getPopularMovies()) {
             is Resource.Success -> {
-                Log.d("MoviesViewModel", "getPopularMovies: ${result.data}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = result.data ?: emptyList(),
@@ -39,7 +38,6 @@ class MoviesViewModel @Inject constructor(
                 ) }
             }
             is Resource.Error -> {
-                Log.d("MoviesViewModel", "getPopularMovies: ${result.message}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = emptyList(),
@@ -56,7 +54,6 @@ class MoviesViewModel @Inject constructor(
 
         when (val result = moviesRepository.getTopRatedMovies()) {
             is Resource.Success -> {
-                Log.d("MoviesViewModel", "getTopRatedMovies: ${result.data}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = result.data ?: emptyList(),
@@ -65,7 +62,6 @@ class MoviesViewModel @Inject constructor(
                 ) }
             }
             is Resource.Error -> {
-                Log.d("MoviesViewModel", "getTopRatedMovies: ${result.message}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = emptyList(),
@@ -83,7 +79,6 @@ class MoviesViewModel @Inject constructor(
 
         when (val result = moviesRepository.getUpcomingMovies()) {
             is Resource.Success -> {
-                Log.d("MoviesViewModel", "getUpcomingMovies: ${result.data}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = result.data ?: emptyList(),
@@ -92,7 +87,6 @@ class MoviesViewModel @Inject constructor(
                 ) }
             }
             is Resource.Error -> {
-                Log.d("MoviesViewModel", "getUpcomingMovies: ${result.message}")
                 _state.update { it.copy(
                     isLoading = false,
                     movies = emptyList(),
