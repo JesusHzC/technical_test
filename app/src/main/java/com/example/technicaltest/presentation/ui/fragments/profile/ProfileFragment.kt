@@ -1,4 +1,4 @@
-package com.example.technicaltest.presentation.ui.fragments
+package com.example.technicaltest.presentation.ui.fragments.profile
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
