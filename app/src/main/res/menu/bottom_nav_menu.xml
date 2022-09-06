@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_account"
+        android:title="@string/menu_profile" />
+    <item
+        android:id="@+id/moviesFragment"
+        android:icon="@drawable/ic_movie"
+        android:title="@string/menu_movies" />
+
+    <item
+        android:id="@+id/locationFragment"
+        android:icon="@drawable/ic_location"
+        android:title="@string/menu_location" />
+
+    <item
+        android:id="@+id/galleryFragment"
+        android:icon="@drawable/ic_gallery"
+        android:title="@string/menu_gallery" />
+</menu>
