@@ -98,4 +98,7 @@ dependencies {
 
     // Firebase Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // Location services
+    implementation ("com.google.android.gms:play-services-location:$rootProject.location_services_version")
 }

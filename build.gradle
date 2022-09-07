@@ -27,4 +27,5 @@ ext {
     firebase_version = '30.3.2'
     image_picker_version = '3.0.0-beta1'
     room_version = '2.4.3'
+    location_services_version = '20.0.0'
 }
