@@ -16,8 +16,8 @@ class FirebaseCloud {
             isPersistenceEnabled = true
             cacheSizeBytes = FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED
         }
-        db = FirebaseFirestore.getInstance()
         db.firestoreSettings = settings
+        db = FirebaseFirestore.getInstance()
     }
 
     fun getDb(): FirebaseFirestore {

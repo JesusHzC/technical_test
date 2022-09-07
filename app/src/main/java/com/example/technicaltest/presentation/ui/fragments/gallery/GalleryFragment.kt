@@ -18,8 +18,10 @@ import com.esafirm.imagepicker.features.ImagePickerLauncher
 import com.esafirm.imagepicker.features.registerImagePicker
 import com.example.technicaltest.databinding.FragmentGalleryBinding
 import com.example.technicaltest.presentation.ui.adapters.gallery.GalleryAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class GalleryFragment : Fragment() {
 
     // Binding

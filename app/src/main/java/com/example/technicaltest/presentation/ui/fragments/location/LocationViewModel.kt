@@ -26,7 +26,7 @@ class LocationViewModel : ViewModel() {
                 showSnackBar(it, view)
             },
             success = {
-                showSnackBar("Location added successfully", view)
+                showSnackBar("Ubicacion agregada exitosamente", view)
                 _allLocations.postValue(_allLocations.value?.plus(location))
             }
         )
