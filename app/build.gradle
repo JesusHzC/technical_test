@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -99,6 +100,12 @@ dependencies {
     // Firebase Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 
+    // Firebase Cloud
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
     // Location services
     implementation ("com.google.android.gms:play-services-location:$rootProject.location_services_version")
+
+    // Google Maps
+    implementation ("com.google.android.gms:play-services-maps:$rootProject.google_maps_version")
 }

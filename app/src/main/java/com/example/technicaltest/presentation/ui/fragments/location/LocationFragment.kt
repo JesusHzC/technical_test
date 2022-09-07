@@ -16,15 +16,22 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.technicaltest.R
 import com.example.technicaltest.databinding.FragmentLocationBinding
 import com.example.technicaltest.services.LocationService
 import com.example.technicaltest.services.LocationService.Companion.ACTION_START_LOCATION_SERVICE
 import com.example.technicaltest.services.LocationService.Companion.TAG_SERVICE_LOCATION
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LocationFragment : Fragment() {
+class LocationFragment : Fragment(), OnMapReadyCallback {
 
     // Binding
     private var _binding: FragmentLocationBinding? = null
@@ -39,6 +46,9 @@ class LocationFragment : Fragment() {
     // Validate Permissions
     private var hasLocationCoarse = false
     private var hasLocationFine = false
+
+    // Map
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,16 +87,26 @@ class LocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.getLocation()
+        viewModel.getAllLocations(view)
+
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun broadcastReceiver() {
-        var broadcastReceiver = object : BroadcastReceiver() {
+        val broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val latitude = intent?.getStringExtra("latitude")?.toDouble()
                 val longitude = intent?.getStringExtra("longitude")?.toDouble()
                 if (latitude != null && longitude != null) {
                     Log.d("Location", "Latitude: $latitude, Longitude: $longitude")
+                    val currentDate = viewModel.getCurrentDate()
+                    val newLocation = com.example.technicaltest.domain.location.Location().apply {
+                        this.latitude = latitude
+                        this.longitude = longitude
+                        this.date = currentDate
+                    }
+                    viewModel.saveLocation(newLocation, view!!)
                 }
             }
         }
@@ -108,5 +128,20 @@ class LocationFragment : Fragment() {
             dialog.dismiss()
         }
         builder.show()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        mMap = map
+
+        viewModel.locations.observe(viewLifecycleOwner, Observer { locations ->
+            // remove all markers
+            mMap.clear()
+            locations.forEach { location ->
+                val latLng = LatLng(location.latitude!!, location.longitude!!)
+                mMap.addMarker(MarkerOptions().position(latLng).title(location.date))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(18f))
+            }
+        })
     }
 }
