@@ -131,8 +131,8 @@ class LocationService : Service() {
             NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         ) {
             setTicker(null)
-            setContentTitle("En ruta")
-            setContentText("Rastreo de servicio")
+            setContentTitle("Localizacion")
+            setContentText("Servicio de ubicación activo")
             setAutoCancel(false)
             setOngoing(true)
             setWhen(java.lang.System.currentTimeMillis())
